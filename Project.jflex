@@ -34,12 +34,12 @@ identifier = {letter}({digit}|{letter})*
 
 
 //separadores y delimitadores
-l_key = "{"
-r_key = "}"
-l_bracket= "["
-r_bracket ="]"
-l_par="("
-r_par=")"
+left_curly_bracket = "{"
+right_curly_bracket = "}"
+left_square_bracket = "["
+right_square_bracket ="]"
+lpar="("
+rpar=")"
 comma =","
 semicolon=";"
 colon=":"
@@ -67,11 +67,9 @@ op_sum = "+"|"-"
 op_inc = "++"
 op_dec = "--"
 op_mod = "%"
-const_char = '({letter}|{digit}|{special_characters}|" ")'
-const_str = '({letter}|{digit}|{special_characters}|" ")+'
+const_char = \'({letter}|{digit}|{special_characters}|" ")\'
+const_str = \"({letter}|{digit}|{special_characters}|" ")+\"
 
-//operador condicional
-op_condicional = "?:"
 
 //operadores de asignacion
 OPASIGN="="
@@ -93,12 +91,11 @@ OPREL = {OPCOMP}|{OPDIF}|{OPGREATER}|{OPGREATEREQ}|{OPLESS}|{OPLESSEQ}|{OPAND}|{
 //reservadas
 integer = "int"
 float = "float"
-character= "chr"
+character= "char"
 bool = "bool"
 string = "string"
 if = "if"
 else ="else"
-elif = "elif"
 while = "while"
 for = "for"
 main = "main"
@@ -107,11 +104,16 @@ true = "true"
 false ="false"
 null = "null"
 break = "stop"
-function = "fnc"
-upTo = "to"
-downTo = "until"
+function = "function"
+to = "to"
 var = "var"
-return = "rtn"
+void = "void"
+return = "return"
+/* Pointer */
+intPointer = "int*" 
+charPointer = "char*"
+
+
 
 //switch 
 // case = "case"
@@ -146,7 +148,7 @@ float_value = {numbers}{dot}{numbers}
 	{bool}			{ return new Symbol(sym.BOOL,yycolumn,yyline,yytext()); }
     {equals}						{ return new Symbol(sym.EQUALS,yycolumn,yyline,yytext()); }
 
-	{op_rel}						{ return new Symbol(sym.OPREL,yycolumn,yyline,yytext()); }
+	{oprel}						{ return new Symbol(sym.OPREL,yycolumn,yyline,yytext()); }
 
 	{op_sum}						{ return new Symbol(sym.OPSUM,yycolumn,yyline,yytext()); }
 	{op_mult}						{ return new Symbol(sym.OPMULT,yycolumn,yyline,yytext()); }
