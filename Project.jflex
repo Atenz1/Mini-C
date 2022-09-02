@@ -64,12 +64,14 @@ equals = "="
 //operadores aritmeticos
 op_mult = "*"|"/"
 op_sum = "+"|"-"
-op_inc = "++"|"--"
+op_inc = "++"
+op_dec = "--"
 op_mod = "%"
-
 const_char = '({letter}|{digit}|{special_characters}|" ")'
 const_str = '({letter}|{digit}|{special_characters}|" ")+'
 
+//operador condicional
+op_condicional = "?:"
 
 //operadores de asignacion
 OPASIGN="="
@@ -77,8 +79,6 @@ OPASIGNADD= "+=" | "-="
 OPASIGNMULT= "*=" | "/="
 
 //operadores relacionales
-
-
 OPCOMP= "=="
 OPDIF = "!="
 OPGREATER= ">"
@@ -103,7 +103,6 @@ while = "while"
 for = "for"
 main = "main"
 return = "return"
-void = "void"
 true = "true"
 false ="false"
 null = "null"
@@ -111,20 +110,17 @@ break = "stop"
 function = "fnc"
 upTo = "to"
 downTo = "until"
-step = "by"
 var = "var"
-at = "at"
 return = "rtn"
 
 //switch 
-switch = "swch"
-case = "case"
-scenario = "scenario"
-default= "dft"
+// case = "case"
+// scenario = "scenario"
+// default= "dft"
 
 //Escritura y lectura
-input = "input"
-output = "output"
+lectura = "scanf"
+escritura = "printf"
 
 
 float_value = {numbers}{dot}{numbers}
