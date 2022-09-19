@@ -1,11 +1,11 @@
 
 
-Manual de Usuario: **Cookie**
+Manual de Usuario: **Mini-C**
 =============================
 
 Contenido
 
-- [Manual de Usuario: **Cookie**](#manual-de-usuario-cookie)
+- [Manual de Usuario: **Mini-C**](#manual-de-usuario-Mini-C)
   - [1\. **Descripción**](#1-descripción)
   - [2\. **Dependencias**](#2-dependencias)
   - [3\. **Lenguaje**](#3-lenguaje)
@@ -38,9 +38,9 @@ Contenido
 1\. **Descripción**
 -------------------
 
-Después de varias horas de pensar en un nombre único para este lenguaje, llegamos a la conclusión que queremos algo simple, que necesitariamos muchas galletas para no aguantar hambre y poder lograr concluir el proyecto de la clase. Así que el nombre de este proyecto nace de estar trabajando y necesitar algo rapido de alivar el hambre, y por eso, su nombre es **Cookie** ademas de ser simple y podria decirse algo elegante(?).
+Después de varias horas de pensar en un nombre único para este lenguaje, llegamos a la conclusión que queremos algo simple, que necesitariamos muchas galletas para no aguantar hambre y poder lograr concluir el proyecto de la clase. Así que el nombre de este proyecto nace de estar trabajando y necesitar algo rapido de alivar el hambre, y por eso, su nombre es **Mini-C** ademas de ser simple y podria decirse algo elegante(?).
 
-\-_Cookie simplicidad en el codigo._
+\-_Mini-C simplicidad en el codigo._
 
 2\. **Dependencias**
 --------------------

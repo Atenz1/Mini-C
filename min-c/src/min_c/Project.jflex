@@ -39,7 +39,7 @@ NEWLINE=\n
 NEWLINES = \n|\r|\n\r|\t|{SPACE}
 SPECIALCHAR = ","|":"|"'"|"!"|"?"|"¡"|"_"|"{"|"}"|"@"|"#"|"$"|"%"|"^"|"&"
 ASSIGNMENT = "="
-DECLARE = "="
+DECLARE = " "
 OPREL = :==|"/="|"<"|"<="|">"|">="
 OPMULT = "*" | "/"
 OPSUM = "+" | "-"
@@ -60,7 +60,7 @@ ID = {LETTER}({LETTER}|{DIGIT})*|{LETTER}({LETTER}|{DIGIT})*
 //Numeros
 NUMINT ={DIGIT}+|"-"{DIGIT}+
 
-FLOAT = {DIGIT}+{DOT}{DIGIT}+|"-"{DIGIT}+{DOT}{DIGIT}+
+DOUBLE = {DIGIT}+{DOT}{DIGIT}+|"-"{DIGIT}+{DOT}{DIGIT}+
 
 //comments
 L_COMMENT = "//"({LETTER}|{DIGIT}|" "|{SPECIALCHAR}|{OPREL}|{OPMULT}|{OPSUM}|{PAR_L}|{PAR_R})*
@@ -122,7 +122,7 @@ PRINTF = "printf"
 	{SCANF}							{return new Symbol(sym.ITSSCANF 	,yyline+1,yycolumn+1,yytext());}
 	{PRINTF}						{return new Symbol(sym.ITSPRINTF 	,yyline+1,yycolumn+1,yytext());}
 	
-	{FLOAT}                   {return new Symbol(sym.ITSFLOAT 	,yyline+1,yycolumn+1,yytext());}
+	{DOUBLE}                   {return new Symbol(sym.ITSDOUBLE 	,yyline+1,yycolumn+1,yytext());}
 	
 	{INT}                           {return new Symbol(sym.ITSINT            ,yyline+1,yycolumn+1,yytext());}   
 	{BOOLEAN}                       {return new Symbol(sym.ITSBOOLEAN            ,yyline+1,yycolumn+1,yytext());}   
