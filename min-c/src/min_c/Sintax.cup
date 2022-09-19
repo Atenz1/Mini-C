@@ -299,11 +299,13 @@ SCENARIO::=
 */
 
 DECLARE::=  ITSINT ITSDECLARE ITSID ITSASSIGNMENT ITSNUMINT ITSSEMICOLON {: parser.output.add("Se detecto una declaracion de entero");:}
+    |ITSDOUBLE ITSDECLARE ITSID ITSASSIGNMENT ITSNUMDOUBLE ITSSEMICOLON {: parser.output.add("Se detecto una declaracion de double");:}
     |ITSSTR ITSDECLARE ITSID ITSASSIGNMENT ITSSTRING ITSSEMICOLON {:parser.output.add("Se detecto una declaracion de un string");:}
     |ITSCHAR ITSDECLARE ITSID ITSASSIGNMENT ITSCHARACTER ITSSEMICOLON {:parser.output.add("Se detecto una declaracion de un char");:}
     |ITSBOOLEAN ITSDECLARE ITSID ITSASSIGNMENT ITSTRUE ITSSEMICOLON {:parser.output.add("Se detecto una declaracion de un boolean verdadero");:}
     |ITSBOOLEAN ITSDECLARE ITSID ITSASSIGNMENT ITSFALSE ITSSEMICOLON {:parser.output.add("Se detecto una declaracion de un boolean falso");:}
     |ITSINT ITSDECLARE ITSID ITSSEMICOLON {:parser.output.add("Se detecto una declaracion de una variable");:}
+    |ITSDOUBLE ITSDECLARE ITSID ITSSEMICOLON {:parser.output.add("Se detecto una declaracion de una variable");:}
     |ITSSTR ITSDECLARE ITSID ITSSEMICOLON {:parser.output.add("Se detecto una declaracion de una variable");:}
     |ITSCHAR ITSDECLARE ITSID ITSSEMICOLON {:parser.output.add("Se detecto una declaracion de una variable");:}
     |ITSBOOLEAN ITSDECLARE ITSID ITSSEMICOLON {:parser.output.add("Se detecto una declaracion de una variable");:}
@@ -314,6 +316,7 @@ DECLARE::=  ITSINT ITSDECLARE ITSID ITSASSIGNMENT ITSNUMINT ITSSEMICOLON {: pars
 
 
 ARRAY::= ITSINT ITSARRAY ITSDECLARE ITSID ITSASSIGNMENT ITSBRACKET_L FILL ITSBRACKET_R ITSSEMICOLON {:parser.output.add("Se detecto una declaracion de un array");:}
+        |ITSDOUBLE ITSARRAY ITSDECLARE ITSID ITSASSIGNMENT ITSBRACKET_L FILL ITSBRACKET_R ITSSEMICOLON {:parser.output.add("Se detecto una declaracion de un array");:}
         |ITSSTR ITSARRAY ITSDECLARE ITSID ITSASSIGNMENT ITSBRACKET_L FILLSTRING ITSBRACKET_R ITSSEMICOLON {:parser.output.add("Se detecto una declaracion de un array");:}
         |ITSCHAR ITSARRAY ITSDECLARE ITSID ITSASSIGNMENT ITSBRACKET_L FILLCHAR ITSBRACKET_R ITSSEMICOLON {:parser.output.add("Se detecto una declaracion de un array");:}
         |ITSBOOLEAN ITSARRAY ITSDECLARE ITSID ITSASSIGNMENT ITSBRACKET_L FILLBOOL ITSBRACKET_R ITSSEMICOLON {:parser.output.add("Se detecto una declaracion de un array");:}

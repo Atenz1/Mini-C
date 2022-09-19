@@ -3,15 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/atenz/Desktop/min-c/src/min_c/Sintax.cup</file>
-            <file>file:/home/atenz/Desktop/min-c/src/min_c/parser.java</file>
-            <file>file:/home/atenz/Desktop/min-c/src/min_c/LexicalElements.java</file>
-            <file>file:/home/atenz/Desktop/min-c/src/min_c/Principal.java</file>
-            <file>file:/home/atenz/Desktop/min-c/src/min_c/Nodo.java</file>
-            <file>file:/home/atenz/Desktop/min-c/src/min_c/Project.jflex</file>
-            <file>file:/home/atenz/Desktop/min-c/src/min_c/MainFrame.java</file>
-            <file>file:/home/atenz/Desktop/min-c/src/min_c/Token.java</file>
-            <file>file:/home/atenz/Desktop/min-c/src/min_c/sym.java</file>
+            <file>file:/home/atenz/Desktop/Mini-C/min-c/src/min_c/LexicalElements.java</file>
+            <file>file:/home/atenz/Desktop/Mini-C/min-c/src/min_c/sym.java</file>
+            <file>file:/home/atenz/Desktop/Mini-C/min-c/src/min_c/Sintax.cup</file>
         </group>
     </open-files>
 </project-private>
