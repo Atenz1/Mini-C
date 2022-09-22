@@ -1,0 +1,520 @@
+package codigo;
+
+import java_cup.runtime.*;
+import java.util.ArrayList;
+import java.util.*;
+import java.io.*;
+
+parser code {:
+     ArrayList gramas = new ArrayList();
+    public Nodo raiz;
+    public int cont = 0;
+    public int maximo(){
+    int a=5;
+    return a;
+}
+    ArrayList errores=new ArrayList();
+    public Symbol s;
+    @Override
+    public void syntax_error (Symbol s){
+        if(s.left==-1){
+        }else{
+                errores.add("En la linea: " + (s.left) + " y Columna: " +(s.right)+ " con el simbolo= "+(s.value));
+    }
+}
+    @Override
+    public void unrecovered_syntax_error(Symbol s){
+    if(s.left==-1){
+    }else{
+        errores.add("Error desconocido, por favor revise la linea: " + (s.left ) + " y columna:  " + (s.right )+ "Con simbolo: "+s.value);
+    }    
+    }
+    public Symbol getS(){
+        return this.s;
+    }
+:} ;
+
+terminal ITS_OPSUM,ITS_OPMULT, ITS_EQUALS,ITS_OPINCDEC;
+terminal ITS_FUNCTION,ITS_COMMA,ITS_COMPARE ,ITS_MAIN  ,ITS_PRINT ;
+terminal ITS_SEMICOLON, ITS_DIGIT,ITS_IF ,ITS_DIGITFLOAT ,ITS_WHILE,ITS_PAR_L ,ITS_PAR_R ,ITS_CURLY_I ,ITS_CURLY_D ; 
+terminal ITS_QUOTE ,ITS_AND,ITS_OR, ITS_FLOAT,ITS_OPREL ,ITS_FOR ,ITS_VOID,ITS_RETURN,ITS_ELSE;
+terminal ITS_COLON, ITS_SWITCH ,ITS_CASE ,ITS_ENDCASE, ITS_LETTER,ITS_FALSE,ITS_TRUE ,ITS_INT ,ITS_CHAR ,ITS_BOOLEAN ,ITS_ASSIGNAMENT,ITS_ID;
+
+non terminal TIPOPRI;
+non terminal Nodo INICIO,LISTA_ARGS,WHILE,TIPOSW,STATEMENTS,CASOSA,CASOS,FUNCTIONES,SWITCH,FOR,IF,FUNCTION,TIPO,VAL,PRINT,LLAMADO,DECLARACION,OPCONDITION, CONDITION,CONDITIONP;
+start with INICIO;
+INICIO ::= ITS_MAIN:id ITS_PAR_L STATEMENTS:b ITS_PAR_R ITS_CURLY_I STATEMENTS:d ITS_CURLY_D
+{:
+        parser.gramas.add("Bloque Main Reconocido ");
+        //System.out.println(id);
+        Nodo nodo = new Nodo(id.toString(),parser.cont);
+        parser.cont++;
+        nodo.addHijo(b);
+        //System.out.println("nodo b");
+        nodo.addHijo(d); 
+        //System.out.println("nodo d");       
+        parser.raiz=nodo;
+:}|error ITS_CURLY_I STATEMENTS ITS_CURLY_D FUNCTIONES {:parser.errores.add("\nFalta el Main o esta mal escrito");:}
+  |ITS_MAIN error STATEMENTS ITS_CURLY_D FUNCTIONES {:parser.errores.add("\nfalta '{' en el main");:}
+;
+FUNCTIONES::= FUNCTION:i FUNCTIONES:s
+            {:
+                Nodo nodo = new Nodo("FUNCTION",parser.cont);
+                parser.cont++;
+                nodo.addHijo(s);   
+                nodo.addHijo(i);
+                //System.out.println("nodo i");
+                RESULT=nodo;
+                :}
+            |    {:
+                    Nodo node = new Nodo("VACIO",parser.cont);
+                    parser.cont++;
+                    RESULT = node;
+                :}
+;
+//GRAMATICA PARA FUNCTIONES
+
+FUNCTION::= ITS_FUNCTION TIPO:s ITS_ID:id ITS_PAR_L LISTA_ARGS:lis ITS_PAR_R ITS_CURLY_I STATEMENTS:b ITS_RETURN ITS_ID ITS_CURLY_D 
+{:parser.gramas.add("Una FUNCTION Reconocida ");    
+                Nodo nodo = new Nodo(id.toString(),parser.cont);
+                parser.cont++;
+                nodo.addHijo(s);
+                nodo.addHijo(lis);
+                
+                nodo.addHijo(b);//statements
+         
+                RESULT=nodo;
+:}
+            |error TIPO ITS_ID  ITS_PAR_L LISTA_ARGS ITS_PAR_R ITS_CURLY_I STATEMENTS ITS_RETURN ITS_ID ITS_CURLY_D 
+                {:parser.errores.add("Falta poner 'Fun' ");:} 
+            |ITS_FUNCTION TIPO error ITS_PAR_L LISTA_ARGS ITS_PAR_R ITS_CURLY_I STATEMENTS ITS_RETURN ITS_ID ITS_CURLY_D {:parser.errores.add("No se puso un ID valido de FUNCTION");:} 
+            |ITS_FUNCTION TIPO ITS_ID error LISTA_ARGS ITS_PAR_R ITS_CURLY_I STATEMENTS ITS_RETURN ITS_ID ITS_CURLY_D {:parser.errores.add("No se puso un '(' en FUNCTION");:}
+;
+//LLAMADO DE FUNCTIONES
+LLAMADO::= ITS_ID:id ITS_PAR_L LISTA_ARGS:li ITS_PAR_R {:
+                parser.gramas.add("Un Llamado de FUNCTION Reconocido ");
+                Nodo nodo = new Nodo("LLAMADO",parser.cont);
+                parser.cont++;                
+                nodo.addHijo(new Nodo(id.toString(),parser.cont));
+                parser.cont++;
+                nodo.addHijo(li);
+                RESULT=nodo;
+                 :}
+;
+// TIPO PARA CUALQUIER COSA
+TIPO::=
+    ITS_VOID:s
+        {:
+            Nodo nodo= new Nodo(s.toString(),parser.cont);
+            parser.cont++;
+            RESULT=nodo;
+        :}
+    |ITS_INT:s
+        {:
+            Nodo nodo= new Nodo(s.toString(),parser.cont);
+            parser.cont++;
+            RESULT=nodo;:}
+    |ITS_CHAR:s{:
+            Nodo nodo= new Nodo(s.toString(),parser.cont);
+            parser.cont++;
+            RESULT=nodo;:}
+    |ITS_BOOLEAN:s{:
+            Nodo nodo= new Nodo(s.toString(),parser.cont);
+            parser.cont++;
+            RESULT=nodo;:}
+    |ITS_FLOAT:s{:
+            Nodo nodo= new Nodo(s.toString(),parser.cont);
+            parser.cont++;
+            RESULT=nodo;:}
+    |error {:parser.errores.add("No se puso un tipo valido de FUNCTION");:}
+;
+//STATEMENTS!! OJO SIEMPRE AGREGAR NUEVAS GRAMATICAS PARA QUE NO TE TIRE LOS WARININGS
+STATEMENTS ::= 
+            DECLARACION:i STATEMENTS:s       
+            {:
+                Nodo nodo = new Nodo("STATEMENT",parser.cont);
+                parser.cont++;
+                nodo.addHijo(i);
+                nodo.addHijo(s);
+                RESULT=nodo;
+            :}    
+            |FOR:i STATEMENTS:s
+            {:
+                Nodo nodo = new Nodo("STATEMENT",parser.cont);
+                parser.cont++;
+                nodo.addHijo(i);
+                nodo.addHijo(s);
+                RESULT=nodo;
+            :}    
+            |IF:i STATEMENTS:s
+            {:
+                Nodo nodo = new Nodo("STATEMENT",parser.cont);
+                parser.cont++;
+                nodo.addHijo(i);
+                nodo.addHijo(s);
+                RESULT=nodo;
+            :}   
+            |WHILE:i STATEMENTS:s
+             {:
+                Nodo nodo = new Nodo("STATEMENT",parser.cont);
+                parser.cont++;
+                nodo.addHijo(i);
+                nodo.addHijo(s);
+                RESULT=nodo;
+            :} 
+            |LLAMADO:i STATEMENTS:s
+            {:
+            Nodo nodo = new Nodo("STATEMENT",parser.cont);
+                parser.cont++;
+                nodo.addHijo(i);
+                nodo.addHijo(s);
+                RESULT=nodo;
+            :}          
+            |SWITCH:i STATEMENTS:s
+            {:
+            Nodo nodo = new Nodo("STATEMENT",parser.cont);
+                parser.cont++;
+                nodo.addHijo(i);
+                nodo.addHijo(s);
+                RESULT=nodo;
+            :} 
+            |PRINT:i STATEMENTS:s
+            {:
+                Nodo nodo = new Nodo("STATEMENT",parser.cont);
+                parser.cont++;
+                nodo.addHijo(i);
+                nodo.addHijo(s);
+                RESULT=nodo;
+            :}
+            |{:
+                    Nodo node = new Nodo("VACIO",parser.cont);
+                    parser.cont++;
+                    node.addHijo(new Nodo("VACIO",parser.cont++));
+                    parser.cont++;
+                    RESULT = node;
+                :}
+;
+//BLOQUE IF
+//BLOQUE ELSE!!!!
+//revisar errores de asignaciones
+IF::=   
+ITS_IF ITS_PAR_L CONDITION:di2 ITS_PAR_R ITS_CURLY_I STATEMENTS:s ITS_CURLY_D {:
+    parser.gramas.add("Un Bloque IF Reconocido ");
+    Nodo nodo= new Nodo("IF",parser.cont);
+    parser.cont++;
+    nodo.addHijo(di2);
+    nodo.addHijo(s);
+    RESULT=nodo;
+:}
+|ITS_ID ITS_PAR_L CONDITION ITS_PAR_R ITS_CURLY_I STATEMENTS ITS_CURLY_D {:parser.errores.add("Falta poner 'IF' o se escribio mal ");:}
+|ITS_IF error CONDITION ITS_PAR_R ITS_CURLY_I STATEMENTS ITS_CURLY_D {:parser.errores.add("Falta poner '(' ");:}
+|ITS_IF ITS_PAR_L CONDITION error ITS_CURLY_I STATEMENTS ITS_CURLY_D {:parser.errores.add("Falta poner ')' ");:}
+|ITS_IF ITS_PAR_L CONDITION ITS_PAR_R error STATEMENTS ITS_CURLY_D {:parser.errores.add("Falta poner '{' ");:}
+;
+//DECLARACIONES
+//revisar errores de DECLARACIONES
+DECLARACION::=
+    ITS_INT ITS_ID:i ITS_ASSIGNAMENT ITS_DIGIT:di ITS_SEMICOLON
+    {:parser.gramas.add("Una Asignacion Reconocida ");
+    Nodo nodo = new Nodo("DECLARACION",parser.cont);
+    parser.cont++;
+    nodo.addHijo(new Nodo(i.toString(),parser.cont));
+    parser.cont++;
+    nodo.addHijo(new Nodo(di.toString(),parser.cont));
+    parser.cont++;  
+    RESULT=nodo;
+    :}
+ 
+//errores dde la primera que es de ints    
+    |error ITS_ID ITS_ASSIGNAMENT ITS_DIGIT {:parser.errores.add("falta el tipo Int de declaracion");:}
+    |ITS_INT ITS_ID error ITS_DIGIT {:parser.errores.add("falta '=' de declaracion");:}
+    |ITS_INT ITS_ID ITS_ASSIGNAMENT error {:parser.errores.add("falta un VAL para la declaracion");:}
+
+    |ITS_INT ITS_ID:i ITS_SEMICOLON
+    {:parser.gramas.add("Una Asignacion Reconocida ");
+    Nodo nodo = new Nodo("DECLARACION",parser.cont);
+    parser.cont++;
+    nodo.addHijo(new Nodo(i.toString(),parser.cont));
+    parser.cont++;
+    RESULT=nodo;
+    :}
+
+    |ITS_BOOLEAN ITS_ID:i ITS_ASSIGNAMENT ITS_TRUE:di ITS_SEMICOLON
+{:parser.gramas.add("Una Asignacion Reconocida ");
+Nodo nodo = new Nodo("DECLARACION",parser.cont);
+    parser.cont++;
+    nodo.addHijo(new Nodo(i.toString(),parser.cont));
+    parser.cont++;
+    nodo.addHijo(new Nodo(di.toString(),parser.cont));
+    parser.cont++;  
+    RESULT=nodo;:}
+    |error ITS_ID ITS_ASSIGNAMENT ITS_TRUE{:parser.errores.add("falta el tipo BOOLEAN de declaracion");:}
+    |ITS_BOOLEAN ITS_ID error ITS_TRUE {:parser.errores.add("falta '=' de declaracion");:}
+    |ITS_BOOLEAN ITS_ID ITS_ASSIGNAMENT error {:parser.errores.add("falta un VAL TRUE para la declaracion");:}
+    
+|ITS_BOOLEAN ITS_ID:i ITS_ASSIGNAMENT ITS_FALSE:di ITS_SEMICOLON
+{:parser.gramas.add("Una Asignacion Reconocida ");
+Nodo nodo = new Nodo("DECLARACION",parser.cont);
+    parser.cont++;
+    nodo.addHijo(new Nodo(i.toString(),parser.cont));
+    parser.cont++;
+    nodo.addHijo(new Nodo(di.toString(),parser.cont));
+    parser.cont++;  
+    RESULT=nodo;
+:}
+
+    |ITS_CHAR  ITS_ID:i  ITS_ASSIGNAMENT ITS_LETTER:di 
+{:parser.gramas.add("Una Asignacion Reconocida ");
+Nodo nodo = new Nodo("DECLARACION",parser.cont);
+    parser.cont++;
+    nodo.addHijo(new Nodo(i.toString(),parser.cont));
+    parser.cont++;
+    nodo.addHijo(new Nodo(di.toString(),parser.cont));
+    parser.cont++;  
+    RESULT=nodo;
+:}
+|error  ITS_ID  ITS_ASSIGNAMENT ITS_LETTER {:parser.errores.add("no se puso el tipo char");:} 
+|ITS_CHAR  error  ITS_ASSIGNAMENT ITS_LETTER {:parser.errores.add("no se puso el id");:} 
+|ITS_CHAR  ITS_ID  error ITS_LETTER {:parser.errores.add("no se puso '='");:} 
+|ITS_CHAR  ITS_ID  ITS_ASSIGNAMENT error {:parser.errores.add("no se puso un VAL al char");:} 
+
+
+|ITS_FLOAT ITS_ID:i ITS_ASSIGNAMENT ITS_DIGITFLOAT:di
+{:parser.gramas.add("Una Asignacion Reconocida ");
+Nodo nodo = new Nodo("DECLARACION",parser.cont);
+    parser.cont++;
+    nodo.addHijo(new Nodo(i.toString(),parser.cont));
+    parser.cont++;
+    nodo.addHijo(new Nodo(di.toString(),parser.cont));
+    parser.cont++;  
+    RESULT=nodo;
+:}
+|error ITS_ID ITS_ASSIGNAMENT ITS_DIGITFLOAT {:parser.errores.add("falta el tipo FLOAT de declaracion");:}
+    |ITS_FLOAT ITS_ID error ITS_DIGITFLOAT {:parser.errores.add("falta '=' de declaracion");:}
+    |ITS_FLOAT ITS_ID ITS_ASSIGNAMENT error {:parser.errores.add("falta un VAL FLOAT para la declaracion");:}
+
+;
+//tipo declaracion para aint bool bool y char y tipo de salida ITS_DIGIT true false LETTER
+//BLOQUE FOOOR
+FOR ::=
+    ITS_FOR ITS_PAR_L ITS_INT  ITS_ID ITS_ASSIGNAMENT ITS_INT ITS_SEMICOLON  ITS_ID ITS_OPREL 
+    ITS_INT ITS_SEMICOLON ITS_ID ITS_OPINCDEC ITS_PAR_R ITS_CURLY_I STATEMENTS ITS_CURLY_D
+{:
+        /*parser.gramas.add("Un Bloque FOR Reconocido ");
+        Nodo nodo = new Nodo("FOR",parser.cont);
+        parser.cont++;
+        nodo.addHijo(new Nodo(di.toString(),parser.cont));
+        parser.cont++;
+        nodo.addHijo(new Nodo (di2.toString(),parser.cont));
+        parser.cont++;
+        nodo.addHijo(s);    
+        RESULT=nodo;*/
+:}
+
+    |ITS_ID ITS_PAR_L ITS_DIGIT ITS_COLON ITS_DIGIT ITS_PAR_R ITS_CURLY_I STATEMENTS ITS_CURLY_D {:parser.errores.add(" Falta poner FOR o se escribio mal");:}
+    |ITS_FOR ITS_PAR_L error ITS_COLON ITS_DIGIT ITS_PAR_R ITS_CURLY_I STATEMENTS ITS_CURLY_D {:parser.errores.add(" Falta poner un VAL de inicio en el for");:}
+    |ITS_FOR ITS_PAR_L ITS_DIGIT error ITS_DIGIT ITS_PAR_R ITS_CURLY_I STATEMENTS ITS_CURLY_D {:parser.errores.add(" Falta poner '::'en el for");:}
+;
+
+//LISTA DE ARGUMENTOS
+LISTA_ARGS::= VAL:v
+            {:
+            Nodo nodo = new Nodo("ARGUMENTOS",parser.cont);
+            parser.cont++;
+            nodo.addHijo(v);
+            RESULT=nodo;
+            :}
+        | VAL:v ITS_COMMA LISTA_ARGS:s 
+        {:
+            Nodo nodo =new Nodo("ARGUMENTOS",parser.cont);
+            parser.cont++;
+            nodo.addHijo(v);
+            nodo.addHijo(s);
+            RESULT= nodo;
+        :}
+;
+//bloque while
+WHILE::=
+ITS_WHILE ITS_PAR_L CONDITION:C ITS_PAR_R ITS_CURLY_I STATEMENTS:s ITS_CURLY_D 
+        {:parser.gramas.add("Un Bloque While Reconocido ");
+        Nodo nodo = new Nodo("WHILE",parser.cont);
+        parser.cont++;
+        nodo.addHijo(C);
+        nodo.addHijo(s);
+        RESULT=nodo;   
+        :}
+;
+
+//bloque switch
+SWITCH::=
+    
+ITS_SWITCH ITS_PAR_L TIPOSW:s ITS_PAR_R ITS_CURLY_I CASOSA:cas ITS_CURLY_D  
+{:parser.gramas.add("Un Bloque Switch Reconocido ");
+        Nodo nodo= new Nodo("SWITCH",parser.cont);
+        parser.cont++;
+        nodo.addHijo(s);
+        nodo.addHijo(cas);
+        RESULT=nodo;
+:} 
+|error ITS_PAR_L TIPOSW ITS_PAR_R ITS_CURLY_I {:parser.errores.add(" Falta el enunciado switch\n");:}
+|ITS_SWITCH error TIPOSW ITS_PAR_R ITS_CURLY_I {:parser.errores.add(" Falta un ( \n");:}
+|ITS_SWITCH ITS_PAR_L error ITS_PAR_R ITS_CURLY_I {:parser.errores.add(" no ingreso un tipo valido en el switch\n");:}
+|ITS_SWITCH ITS_PAR_L TIPOSW error ITS_CURLY_I {:parser.errores.add(" No se puso ')'\n");:}
+|ITS_SWITCH ITS_PAR_L TIPOSW ITS_PAR_R error {:parser.errores.add(" No se puso '{' en el Switch \n");:}
+;
+TIPOSW::=
+    ITS_ID:s
+{:
+    Nodo nodo = new Nodo(s.toString(),parser.cont);
+    parser.cont++;
+    RESULT=nodo;
+
+:}
+    |ITS_LETTER:s{:
+    Nodo nodo = new Nodo(s.toString(),parser.cont);
+    parser.cont++;
+    RESULT=nodo;
+:}
+    |ITS_DIGIT:s{:
+    Nodo nodo = new Nodo(s.toString(),parser.cont);
+    parser.cont++;
+    RESULT=nodo;
+:}
+    
+;
+
+//PRINT
+PRINT::=
+
+ITS_PRINT ITS_PAR_L ITS_QUOTE TIPOPRI ITS_QUOTE ITS_PAR_R 
+{:parser.gramas.add("Una Impresion Reconocida ");
+    Nodo nodo = new Nodo("SOUT",parser.cont);
+    parser.cont++;
+    RESULT=nodo;
+:}
+|ITS_ID ITS_PAR_L ITS_QUOTE TIPOPRI ITS_QUOTE ITS_PAR_R {:parser.errores.add(" Sout mal escrito\n");:}
+|ITS_PRINT ITS_PAR_L error TIPOPRI ITS_QUOTE ITS_PAR_R{:parser.errores.add(" falta una '\n");:}
+|ITS_PRINT ITS_PAR_L ITS_QUOTE  TIPOPRI error ITS_PAR_R{:parser.errores.add(" falta una '\n");:}
+|ITS_PRINT error ITS_QUOTE TIPOPRI ITS_QUOTE ITS_PAR_R {:parser.errores.add(" falta un '(' \n");:}
+|ITS_PRINT ITS_PAR_L ITS_QUOTE TIPOPRI ITS_QUOTE error {:parser.errores.add(" falta un ')' \n");:}
+;
+TIPOPRI::=
+    ITS_DIGIT
+    |ITS_ID
+    |ITS_LETTER
+;
+
+//CONDITIONES
+/*CONDITION::= VAL:v1 ITS_AND:id VAL:v2
+            {:
+            Nodo nodo=new Nodo("CONDITION",parser.cont);
+            parser.cont++;
+            nodo.addHijo(v1);
+            nodo.addHijo(new Nodo(id.toString(),parser.cont));
+            parser.cont++;
+            nodo.addHijo(v2);
+            RESULT=nodo;
+            :}
+            |VAL:v1 ITS_OR:id VAL:v2
+            {:
+            Nodo nodo=new Nodo("CONDITION",parser.cont);
+            parser.cont++;
+            nodo.addHijo(v1);
+            nodo.addHijo(new Nodo(id.toString(),parser.cont));
+            parser.cont++;
+            nodo.addHijo(v2);
+            RESULT=nodo;
+            :}
+            |VAL:v1 ITS_OPREL:id VAL:v2
+            {:
+            Nodo nodo=new Nodo("CONDITION",parser.cont);
+            parser.cont++;
+            nodo.addHijo(v1);
+            nodo.addHijo(new Nodo(id.toString(),parser.cont));
+            parser.cont++;
+            nodo.addHijo(v2);
+            RESULT=nodo;
+            :}
+            |VAL ITS_COMPARE VAL
+            
+
+;*/
+VAL::= ITS_DIGIT :id
+            {:
+                Nodo nodo= new Nodo(id.toString(),parser.cont);
+                parser.cont++;
+                RESULT=nodo;
+            :}
+                | ITS_TRUE :id
+            {:
+                Nodo nodo= new Nodo(id.toString(),parser.cont);
+                parser.cont++;
+                RESULT=nodo;
+            :}
+                | ITS_FALSE:id
+            {:
+                Nodo nodo= new Nodo(id.toString(),parser.cont);
+                parser.cont++;
+                RESULT=nodo;
+            :}
+                | ITS_ID  :id
+            {:
+                Nodo nodo= new Nodo(id.toString(),parser.cont);
+                parser.cont++;
+                RESULT=nodo;
+            :}             
+;
+
+
+CONDITION ::= CONDITIONP:s ITS_AND:id CONDITION:o
+                {:
+                Nodo nodo= new Nodo("CONDITION",parser.cont);
+                parser.cont++;
+                nodo.addHijo(s);
+                nodo.addHijo(new Nodo(id.toString(),parser.cont));
+                parser.cont++;                
+                nodo.addHijo(o);
+                RESULT=nodo;
+                :}
+            | CONDITIONP:s ITS_OR:id CONDITION:o
+                {:
+                Nodo nodo= new Nodo("CONDITION",parser.cont);
+                parser.cont++;
+                nodo.addHijo(s);
+                nodo.addHijo(new Nodo(id.toString(),parser.cont));
+                parser.cont++; 
+                nodo.addHijo(o);
+                RESULT=nodo;              
+                :}
+            | CONDITIONP:s
+                {: Nodo nodo= new Nodo("CONDITION",parser.cont);
+                parser.cont++;
+                nodo.addHijo(s);
+                RESULT=nodo;
+                :}
+            
+;
+CONDITIONP::= VAL:v OPCONDITION:o VAL:v2
+           {:
+                Nodo nodo = new Nodo("CONDITIONP",parser.cont);
+                parser.cont++;
+                nodo.addHijo(v);
+                nodo.addHijo(o);
+                nodo.addHijo(v2);
+                RESULT=nodo;
+            :}
+;
+OPCONDITION::= ITS_OPREL:id
+           {:
+                Nodo nodo= new Nodo(id.toString(),parser.cont);
+                parser.cont++;
+                RESULT=nodo;
+            :}
+            | ITS_COMPARE :id
+                {:
+                Nodo nodo= new Nodo(id.toString(),parser.cont);
+                parser.cont++;
+                RESULT=nodo;
+            :}
+;
+
