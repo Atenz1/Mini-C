@@ -6,7 +6,7 @@ import java.util.*;
 import java.io.*;
 
 parser code {:
-     ArrayList gramas = new ArrayList();
+     ArrayList gramar = new ArrayList();
     public Nodo raiz;
     public int cont = 0;
     public int maximo(){
@@ -45,7 +45,7 @@ non terminal Nodo INICIO,LISTA_ARGS,WHILE,TIPOSW,STATEMENTS,CASOSA,CASOS,FUNCTIO
 start with INICIO;
 INICIO ::= ITS_MAIN:id ITS_PAR_L STATEMENTS:b ITS_PAR_R ITS_CURLY_I STATEMENTS:d ITS_CURLY_D
 {:
-        parser.gramas.add("Bloque Main Reconocido ");
+        parser.gramar.add("Bloque Main Reconocido ");
         //System.out.println(id);
         Nodo nodo = new Nodo(id.toString(),parser.cont);
         parser.cont++;
@@ -75,7 +75,7 @@ FUNCTIONES::= FUNCTION:i FUNCTIONES:s
 //GRAMATICA PARA FUNCTIONES
 
 FUNCTION::= ITS_FUNCTION TIPO:s ITS_ID:id ITS_PAR_L LISTA_ARGS:lis ITS_PAR_R ITS_CURLY_I STATEMENTS:b ITS_RETURN ITS_ID ITS_CURLY_D 
-{:parser.gramas.add("Una FUNCTION Reconocida ");    
+{:parser.gramar.add("Una FUNCTION Reconocida ");    
                 Nodo nodo = new Nodo(id.toString(),parser.cont);
                 parser.cont++;
                 nodo.addHijo(s);
@@ -92,7 +92,7 @@ FUNCTION::= ITS_FUNCTION TIPO:s ITS_ID:id ITS_PAR_L LISTA_ARGS:lis ITS_PAR_R ITS
 ;
 //LLAMADO DE FUNCTIONES
 LLAMADO::= ITS_ID:id ITS_PAR_L LISTA_ARGS:li ITS_PAR_R {:
-                parser.gramas.add("Un Llamado de FUNCTION Reconocido ");
+                parser.gramar.add("Un Llamado de FUNCTION Reconocido ");
                 Nodo nodo = new Nodo("LLAMADO",parser.cont);
                 parser.cont++;                
                 nodo.addHijo(new Nodo(id.toString(),parser.cont));
@@ -195,11 +195,10 @@ STATEMENTS ::=
                 :}
 ;
 //BLOQUE IF
-//BLOQUE ELSE
 
 IF::=   
 ITS_IF ITS_PAR_L CONDITION:di2 ITS_PAR_R ITS_CURLY_I STATEMENTS:s ITS_CURLY_D {:
-    parser.gramas.add("Un Bloque IF Reconocido ");
+    parser.gramar.add("Un Bloque IF Reconocido ");
     Nodo nodo= new Nodo("IF",parser.cont);
     parser.cont++;
     nodo.addHijo(di2);
@@ -215,7 +214,7 @@ ITS_IF ITS_PAR_L CONDITION:di2 ITS_PAR_R ITS_CURLY_I STATEMENTS:s ITS_CURLY_D {:
 
 DECLARACION::=
     ITS_INT ITS_ID:i ITS_ASSIGNAMENT ITS_DIGIT:di ITS_SEMICOLON
-    {:parser.gramas.add("Una Asignacion Reconocida ");
+    {:parser.gramar.add("Una Asignacion Reconocida ");
     Nodo nodo = new Nodo("DECLARACION",parser.cont);
     parser.cont++;
     nodo.addHijo(new Nodo(i.toString(),parser.cont));
@@ -225,13 +224,13 @@ DECLARACION::=
     RESULT=nodo;
     :}
  
-//errores de la primera que es de ints    
+//errores del primer int   
     |error ITS_ID ITS_ASSIGNAMENT ITS_DIGIT {:parser.errores.add("falta el tipo Int de declaracion");:}
     |ITS_INT ITS_ID error ITS_DIGIT {:parser.errores.add("falta '=' de declaracion");:}
     |ITS_INT ITS_ID ITS_ASSIGNAMENT error {:parser.errores.add("falta un VAL para la declaracion");:}
 
     |ITS_INT ITS_ID:i ITS_SEMICOLON
-    {:parser.gramas.add("Una Asignacion Reconocida ");
+    {:parser.gramar.add("Una Asignacion Reconocida ");
     Nodo nodo = new Nodo("DECLARACION",parser.cont);
     parser.cont++;
     nodo.addHijo(new Nodo(i.toString(),parser.cont));
@@ -240,7 +239,7 @@ DECLARACION::=
     :}
 
     |ITS_BOOLEAN ITS_ID:i ITS_ASSIGNAMENT ITS_TRUE:di ITS_SEMICOLON
-    {:parser.gramas.add("Una Asignacion Reconocida ");
+    {:parser.gramar.add("Una Asignacion Reconocida ");
     Nodo nodo = new Nodo("DECLARACION",parser.cont);
     parser.cont++;
     nodo.addHijo(new Nodo(i.toString(),parser.cont));
@@ -253,7 +252,7 @@ DECLARACION::=
     |ITS_BOOLEAN ITS_ID ITS_ASSIGNAMENT error {:parser.errores.add("falta un VAL TRUE para la declaracion");:}
     
 |ITS_BOOLEAN ITS_ID:i ITS_ASSIGNAMENT ITS_FALSE:di ITS_SEMICOLON
-{:parser.gramas.add("Una Asignacion Reconocida ");
+{:parser.gramar.add("Una Asignacion Reconocida ");
 Nodo nodo = new Nodo("DECLARACION",parser.cont);
     parser.cont++;
     nodo.addHijo(new Nodo(i.toString(),parser.cont));
@@ -264,7 +263,7 @@ Nodo nodo = new Nodo("DECLARACION",parser.cont);
 :}
 
     |ITS_CHAR  ITS_ID:i  ITS_ASSIGNAMENT ITS_LETTER:di 
-{:parser.gramas.add("Una Asignacion Reconocida ");
+{:parser.gramar.add("Una Asignacion Reconocida ");
 Nodo nodo = new Nodo("DECLARACION",parser.cont);
     parser.cont++;
     nodo.addHijo(new Nodo(i.toString(),parser.cont));
@@ -280,7 +279,7 @@ Nodo nodo = new Nodo("DECLARACION",parser.cont);
 
 
 |ITS_FLOAT ITS_ID:i ITS_ASSIGNAMENT ITS_DIGITFLOAT:di
-{:parser.gramas.add("Una Asignacion Reconocida ");
+{:parser.gramar.add("Una Asignacion Reconocida ");
 Nodo nodo = new Nodo("DECLARACION",parser.cont);
     parser.cont++;
     nodo.addHijo(new Nodo(i.toString(),parser.cont));
@@ -300,7 +299,7 @@ FOR ::=
     ITS_FOR ITS_PAR_L ITS_INT  ITS_ID ITS_ASSIGNAMENT ITS_INT ITS_SEMICOLON  ITS_ID ITS_OPREL 
     ITS_INT ITS_SEMICOLON ITS_ID ITS_OPINCDEC ITS_PAR_R ITS_CURLY_I STATEMENTS ITS_CURLY_D
 {:
-        /*parser.gramas.add("Un Bloque FOR Reconocido ");
+        /*parser.gramar.add("Un Bloque FOR Reconocido ");
         Nodo nodo = new Nodo("FOR",parser.cont);
         parser.cont++;
         nodo.addHijo(new Nodo(di.toString(),parser.cont));
@@ -336,7 +335,7 @@ LISTA_ARGS::= VAL:v
 //bloque while
 WHILE::=
 ITS_WHILE ITS_PAR_L CONDITION:C ITS_PAR_R ITS_CURLY_I STATEMENTS:s ITS_CURLY_D 
-        {:parser.gramas.add("Un Bloque While Reconocido ");
+        {:parser.gramar.add("Un Bloque While Reconocido ");
         Nodo nodo = new Nodo("WHILE",parser.cont);
         parser.cont++;
         nodo.addHijo(C);
@@ -371,7 +370,7 @@ TIPOSW::=
 PRINT::=
 
 ITS_PRINT ITS_PAR_L ITS_QUOTE TIPOPRI ITS_QUOTE ITS_PAR_R 
-{:parser.gramas.add("Una Impresion Reconocida ");
+{:parser.gramar.add("Una Impresion Reconocida ");
     Nodo nodo = new Nodo("SOUT",parser.cont);
     parser.cont++;
     RESULT=nodo;
