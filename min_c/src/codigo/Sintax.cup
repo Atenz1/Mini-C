@@ -101,7 +101,7 @@ LLAMADO::= ITS_ID:id ITS_PAR_L LISTA_ARGS:li ITS_PAR_R {:
                 RESULT=nodo;
                  :}
 ;
-// TIPO PARA CUALQUIER COSA
+// TIPOS
 TIPO::=
     ITS_VOID:s
         {:
@@ -128,7 +128,7 @@ TIPO::=
             RESULT=nodo;:}
     |error {:parser.errores.add("No se puso un tipo valido de FUNCTION");:}
 ;
-//STATEMENTS!! OJO SIEMPRE AGREGAR NUEVAS GRAMATICAS PARA QUE NO TE TIRE LOS WARININGS
+//STATEMENTS
 STATEMENTS ::= 
             DECLARACION:i STATEMENTS:s       
             {:
@@ -195,8 +195,8 @@ STATEMENTS ::=
                 :}
 ;
 //BLOQUE IF
-//BLOQUE ELSE!!!!
-//revisar errores de asignaciones
+//BLOQUE ELSE
+
 IF::=   
 ITS_IF ITS_PAR_L CONDITION:di2 ITS_PAR_R ITS_CURLY_I STATEMENTS:s ITS_CURLY_D {:
     parser.gramas.add("Un Bloque IF Reconocido ");
@@ -212,7 +212,7 @@ ITS_IF ITS_PAR_L CONDITION:di2 ITS_PAR_R ITS_CURLY_I STATEMENTS:s ITS_CURLY_D {:
 |ITS_IF ITS_PAR_L CONDITION ITS_PAR_R error STATEMENTS ITS_CURLY_D {:parser.errores.add("Falta poner '{' ");:}
 ;
 //DECLARACIONES
-//revisar errores de DECLARACIONES
+
 DECLARACION::=
     ITS_INT ITS_ID:i ITS_ASSIGNAMENT ITS_DIGIT:di ITS_SEMICOLON
     {:parser.gramas.add("Una Asignacion Reconocida ");
@@ -225,7 +225,7 @@ DECLARACION::=
     RESULT=nodo;
     :}
  
-//errores dde la primera que es de ints    
+//errores de la primera que es de ints    
     |error ITS_ID ITS_ASSIGNAMENT ITS_DIGIT {:parser.errores.add("falta el tipo Int de declaracion");:}
     |ITS_INT ITS_ID error ITS_DIGIT {:parser.errores.add("falta '=' de declaracion");:}
     |ITS_INT ITS_ID ITS_ASSIGNAMENT error {:parser.errores.add("falta un VAL para la declaracion");:}
@@ -240,8 +240,8 @@ DECLARACION::=
     :}
 
     |ITS_BOOLEAN ITS_ID:i ITS_ASSIGNAMENT ITS_TRUE:di ITS_SEMICOLON
-{:parser.gramas.add("Una Asignacion Reconocida ");
-Nodo nodo = new Nodo("DECLARACION",parser.cont);
+    {:parser.gramas.add("Una Asignacion Reconocida ");
+    Nodo nodo = new Nodo("DECLARACION",parser.cont);
     parser.cont++;
     nodo.addHijo(new Nodo(i.toString(),parser.cont));
     parser.cont++;
@@ -294,8 +294,8 @@ Nodo nodo = new Nodo("DECLARACION",parser.cont);
     |ITS_FLOAT ITS_ID ITS_ASSIGNAMENT error {:parser.errores.add("falta un VAL FLOAT para la declaracion");:}
 
 ;
-//tipo declaracion para aint bool bool y char y tipo de salida ITS_DIGIT true false LETTER
-//BLOQUE FOOOR
+
+//BLOQUE FOR
 FOR ::=
     ITS_FOR ITS_PAR_L ITS_INT  ITS_ID ITS_ASSIGNAMENT ITS_INT ITS_SEMICOLON  ITS_ID ITS_OPREL 
     ITS_INT ITS_SEMICOLON ITS_ID ITS_OPINCDEC ITS_PAR_R ITS_CURLY_I STATEMENTS ITS_CURLY_D
@@ -345,23 +345,7 @@ ITS_WHILE ITS_PAR_L CONDITION:C ITS_PAR_R ITS_CURLY_I STATEMENTS:s ITS_CURLY_D
         :}
 ;
 
-//bloque switch
-SWITCH::=
-    
-ITS_SWITCH ITS_PAR_L TIPOSW:s ITS_PAR_R ITS_CURLY_I CASOSA:cas ITS_CURLY_D  
-{:parser.gramas.add("Un Bloque Switch Reconocido ");
-        Nodo nodo= new Nodo("SWITCH",parser.cont);
-        parser.cont++;
-        nodo.addHijo(s);
-        nodo.addHijo(cas);
-        RESULT=nodo;
-:} 
-|error ITS_PAR_L TIPOSW ITS_PAR_R ITS_CURLY_I {:parser.errores.add(" Falta el enunciado switch\n");:}
-|ITS_SWITCH error TIPOSW ITS_PAR_R ITS_CURLY_I {:parser.errores.add(" Falta un ( \n");:}
-|ITS_SWITCH ITS_PAR_L error ITS_PAR_R ITS_CURLY_I {:parser.errores.add(" no ingreso un tipo valido en el switch\n");:}
-|ITS_SWITCH ITS_PAR_L TIPOSW error ITS_CURLY_I {:parser.errores.add(" No se puso ')'\n");:}
-|ITS_SWITCH ITS_PAR_L TIPOSW ITS_PAR_R error {:parser.errores.add(" No se puso '{' en el Switch \n");:}
-;
+
 TIPOSW::=
     ITS_ID:s
 {:
@@ -403,42 +387,6 @@ TIPOPRI::=
     |ITS_ID
     |ITS_LETTER
 ;
-
-//CONDITIONES
-/*CONDITION::= VAL:v1 ITS_AND:id VAL:v2
-            {:
-            Nodo nodo=new Nodo("CONDITION",parser.cont);
-            parser.cont++;
-            nodo.addHijo(v1);
-            nodo.addHijo(new Nodo(id.toString(),parser.cont));
-            parser.cont++;
-            nodo.addHijo(v2);
-            RESULT=nodo;
-            :}
-            |VAL:v1 ITS_OR:id VAL:v2
-            {:
-            Nodo nodo=new Nodo("CONDITION",parser.cont);
-            parser.cont++;
-            nodo.addHijo(v1);
-            nodo.addHijo(new Nodo(id.toString(),parser.cont));
-            parser.cont++;
-            nodo.addHijo(v2);
-            RESULT=nodo;
-            :}
-            |VAL:v1 ITS_OPREL:id VAL:v2
-            {:
-            Nodo nodo=new Nodo("CONDITION",parser.cont);
-            parser.cont++;
-            nodo.addHijo(v1);
-            nodo.addHijo(new Nodo(id.toString(),parser.cont));
-            parser.cont++;
-            nodo.addHijo(v2);
-            RESULT=nodo;
-            :}
-            |VAL ITS_COMPARE VAL
-            
-
-;*/
 VAL::= ITS_DIGIT :id
             {:
                 Nodo nodo= new Nodo(id.toString(),parser.cont);
